@@ -29,7 +29,7 @@ class MyRecycleAdapter(val mContext : Context, val mImgList : ArrayList<ImgDTO> 
     inner class ViewHolder(itemView : View ) : RecyclerView.ViewHolder(itemView) {
         val img = itemView.findViewById<ImageView>(R.id.mImageView)
         fun bind(row : ImgDTO , context : Context) {
-            Glide.with(mContext).load(row.thumbnail_url).into(img)
+            Glide.with(mContext).load(row.image_url).into(img)
         }
     }
 }
