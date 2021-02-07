@@ -23,7 +23,7 @@ interface KakaoImgService {
     companion object {
 
         private const val BASE_URL = "https://dapi.kakao.com"
-        private const val ACCESS_TOKEN = "6aeeb90417aa39c14db78982923d6464"
+        private const val ACCESS_TOKEN = ""
 
         fun create(): KakaoImgService {
             //val httpLoggingInterceptor = HttpLoggingInterceptor()
