@@ -18,7 +18,7 @@ interface KakaoImgService {
                     @Query("page") page : Int = 1,
                     @Query("query") query : String,
                     @Query("size") size : Int = 10,
-    ) : Call<ImggDTO>
+    ) : Call<ParentImgDTO>
 
     companion object {
 
