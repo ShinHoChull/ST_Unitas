@@ -2,9 +2,16 @@ package com.m2comm.st_unitas
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
+import android.os.Message
+import android.text.Editable
+import android.text.TextWatcher
 import android.util.Log
 import android.view.View
+import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
+import androidx.core.widget.addTextChangedListener
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.activity_main.*
@@ -12,24 +19,25 @@ import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.util.*
+import kotlin.concurrent.timer
 
 
-class MainActivity : AppCompatActivity(), View.OnClickListener  {
+class MainActivity : AppCompatActivity()  {
 
     private val TAG: String = MainActivity::class.java.simpleName;
     private var mImageList = arrayListOf<ImgDTO>()
     val mKaKaoImgApi: KakaoImgService = KakaoImgService.create()
     private lateinit var mAdapter: MyRecycleAdapter
     var mKeyword = ""
+    var mTimer = Timer()
 
     private var mIsEnd = true // 다음 페이지 유무 있으면 false
-    private var page = 0       // 현재 페이지
+    private var mPage = 0       // 현재 페이지
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
-        mButton.setOnClickListener(this)
 
         mAdapter = MyRecycleAdapter(this, mImageList)
         mRecyclerview.adapter = mAdapter
@@ -44,8 +52,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener  {
                 if (!hasNextPage()) {
                     val lastVisibleItem = (layoutManager as LinearLayoutManager)
                         .findLastCompletelyVisibleItemPosition()
-                    Log.d(TAG , "InData=${layoutManager.itemCount}")
-                    Log.d(TAG , "InData=${lastVisibleItem + 2}")
+
                     // 마지막으로 보여진 아이템 position 이
                     // 전체 아이템 개수보다 2개 모자란 경우, 데이터를 loadMore 한다
                     if (layoutManager.itemCount <= lastVisibleItem + 2) {
@@ -55,6 +62,39 @@ class MainActivity : AppCompatActivity(), View.OnClickListener  {
                 }
             }
         })
+
+        mEditText.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+            }
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+
+                mTimer.cancel()
+            }
+
+            override fun afterTextChanged(s: Editable?) {
+                mTimer = timer(period = 1000 , initialDelay = 1000) {
+                    handler.obtainMessage().sendToTarget()
+                    mTimer.cancel()
+                }
+            }
+        })
+    }
+
+    val handler : Handler = object : Handler(Looper.getMainLooper()) {
+        override fun handleMessage(inputMessage: Message) {
+            if (mEditText.text.toString() != "") {
+                mImageList.clear()
+                mAdapter.notifyDataSetChanged()
+                getKeyWord(mEditText.text.toString())
+                hideKeyboard()
+            }
+        }
+    }
+
+    fun hideKeyboard() {
+        val imm = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.hideSoftInputFromWindow(mEditText.windowToken, 0)
     }
 
     private fun getKeyWord(query: String) {
@@ -68,9 +108,8 @@ class MainActivity : AppCompatActivity(), View.OnClickListener  {
                     call: Call<ParentImgDTO>,
                     response: Response<ParentImgDTO>
                 ) {
-                    Log.d(TAG, "OKOOK=${response.body()!!.meta.pageable_count}")
-                    setHasNextPage(response.body()!!.meta.is_end)
-                    if (response.body() != null && response.isSuccessful ) {
+                    if ( response.body() != null && response.isSuccessful ) {
+                        setHasNextPage(response.body()!!.meta.is_end)
                         mAdapter.setLoadingView(false)
                         for (row in response.body()!!.documents) {
                             mImageList.add(
@@ -86,10 +125,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener  {
                                 )
                             )
                         }
-                        mAdapter.run {
-                            setLoadingView(false)
-                            addPosts()
-                        }
+                        mAdapter.notifyDataSetChanged()
                     }
                 }
 
@@ -98,12 +134,11 @@ class MainActivity : AppCompatActivity(), View.OnClickListener  {
                 }
             })
         },1000)
-
     }
 
     private fun getPage(): Int {
-        page++
-        return page
+        mPage++
+        return mPage
     }
 
     private fun hasNextPage(): Boolean {
@@ -115,22 +150,6 @@ class MainActivity : AppCompatActivity(), View.OnClickListener  {
     }
 
 
-    override fun onClick(v: View?) {
-        if (v != null) {
-            when (v.id) {
-                R.id.mButton -> if (mEditText.text.toString() == "") {
-                    Toast.makeText(
-                        this, "검색어를 입력해주세요",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                } else {
-                    this.getKeyWord(mEditText.text.toString())
-                }
-                else -> ""
-            }
-        }
 
-
-    }
 }
 

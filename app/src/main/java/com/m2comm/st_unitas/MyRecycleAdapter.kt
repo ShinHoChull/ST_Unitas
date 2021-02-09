@@ -16,18 +16,6 @@ class MyRecycleAdapter(val mContext : Context, val mImgList : ArrayList<ImgDTO> 
         private const val TYPE_LOADING = 1
     }
 
-    fun setPosts(posts: ArrayList<ImgDTO>) {
-        this.mImgList.apply {
-            clear()
-            addAll(posts)
-        }
-        notifyDataSetChanged()
-    }
-
-    fun addPosts() {
-        //this.mImgList.addAll(posts)
-        notifyDataSetChanged()
-    }
 
     fun setLoadingView(b: Boolean) {
         if (b) {
@@ -61,10 +49,6 @@ class MyRecycleAdapter(val mContext : Context, val mImgList : ArrayList<ImgDTO> 
                 return ViewHolder(inflatedView)
             }
         }
-
-//        val view = LayoutInflater.from(parent.context)
-//            .inflate(R.layout.recycleview_item , parent , false)
-//        return ViewHolder(view)
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
@@ -92,8 +76,8 @@ class MyRecycleAdapter(val mContext : Context, val mImgList : ArrayList<ImgDTO> 
         fun bind(row : ImgDTO , context : Context) {
 
             val display =  context.resources.displayMetrics
-
             Glide.with(mContext).load(row.image_url).override(display.widthPixels / 2, display.widthPixels / 2).into(img)
+
         }
     }
 }
