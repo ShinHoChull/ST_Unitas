@@ -35,18 +35,18 @@ class MyRecycleAdapter(val mContext : Context, val mImgList : ArrayList<ImgDTO> 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
 
-        when (viewType) {
+        return when (viewType) {
             TYPE_POST -> {
                 val inflatedView = LayoutInflater
                     .from(parent.context)
                     .inflate(R.layout.recycleview_item, parent, false)
-                return ViewHolder(inflatedView)
+                ViewHolder(inflatedView)
             }
             else -> {
                 val inflatedView = LayoutInflater
                     .from(parent.context)
                     .inflate(R.layout.item_loding, parent, false)
-                return ViewHolder(inflatedView)
+                ViewHolder(inflatedView)
             }
         }
     }

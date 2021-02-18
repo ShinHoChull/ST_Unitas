@@ -12,6 +12,7 @@ import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.core.widget.addTextChangedListener
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.activity_main.*
@@ -35,13 +36,22 @@ class MainActivity : AppCompatActivity()  {
     private var mIsEnd = true // 다음 페이지 유무 있으면 false
     private var mPage = 0       // 현재 페이지
 
+    private lateinit var mMainViewModel: MainViewModel
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
         mAdapter = MyRecycleAdapter(this, mImageList)
-        mRecyclerview.adapter = mAdapter
 
+        mMainViewModel = ViewModelProvider(this,ViewModelProvider.NewInstanceFactory()).get(MainViewModel::class.java)
+
+        mMainViewModel.title.observe(this , androidx.lifecycle.Observer {
+            Log.d("Data=>",it)
+        })
+
+
+        mRecyclerview.adapter = mAdapter
         mRecyclerview.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
@@ -63,6 +73,7 @@ class MainActivity : AppCompatActivity()  {
             }
         })
 
+
         mEditText.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
             }
@@ -82,12 +93,15 @@ class MainActivity : AppCompatActivity()  {
     }
 
     val handler : Handler = object : Handler(Looper.getMainLooper()) {
-        override fun handleMessage(inputMessage: Message) {
-            if (mEditText.text.toString() != "") {
-                mImageList.clear()
-                mAdapter.notifyDataSetChanged()
-                getKeyWord(mEditText.text.toString())
-                hideKeyboard()
+        override fun handleMessage( inputMessage: Message ) {
+            if ( mEditText.text.toString() != "" ) {
+                mMainViewModel.title.value = mEditText.text.toString()
+
+//                mMainViewModel.title = mEditText.text.toString()
+//                mImageList.clear()
+//                mAdapter.notifyDataSetChanged()
+//                getKeyWord(mEditText.text.toString())
+//                hideKeyboard()
             }
         }
     }
