@@ -46,9 +46,9 @@ class MainActivity : AppCompatActivity()  {
 
         mMainViewModel = ViewModelProvider(this,ViewModelProvider.NewInstanceFactory()).get(MainViewModel::class.java)
 
-        mMainViewModel.title.observe(this , androidx.lifecycle.Observer {
-            Log.d("Data=>",it)
-        })
+//        mMainViewModel.title.observe(this , androidx.lifecycle.Observer {
+//            Log.d("Data=>",it)
+//        })
 
 
         mRecyclerview.adapter = mAdapter
@@ -95,13 +95,12 @@ class MainActivity : AppCompatActivity()  {
     val handler : Handler = object : Handler(Looper.getMainLooper()) {
         override fun handleMessage( inputMessage: Message ) {
             if ( mEditText.text.toString() != "" ) {
-                mMainViewModel.title.value = mEditText.text.toString()
+                //mMainViewModel.title.value = mEditText.text.toString()
 
-//                mMainViewModel.title = mEditText.text.toString()
-//                mImageList.clear()
-//                mAdapter.notifyDataSetChanged()
-//                getKeyWord(mEditText.text.toString())
-//                hideKeyboard()
+                mImageList.clear()
+                mAdapter.notifyDataSetChanged()
+                getKeyWord(mEditText.text.toString())
+                hideKeyboard()
             }
         }
     }
