@@ -18,6 +18,7 @@ class MyRecycleAdapter(val mContext : Context, val mImgList : ArrayList<ImgDTO> 
 
 
     fun setLoadingView(b: Boolean) {
+        var test = true
         if (b) {
             android.os.Handler().post {
 
