@@ -32,6 +32,7 @@ class MainActivity : AppCompatActivity()  {
     private lateinit var mAdapter: MyRecycleAdapter
     var mKeyword = ""
     var mTimer = Timer()
+    var test = "1234"
 
     private var mIsEnd = true // 다음 페이지 유무 있으면 false
     private var mPage = 0       // 현재 페이지
