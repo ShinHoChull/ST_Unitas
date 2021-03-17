@@ -1,6 +1,7 @@
 package com.m2comm.st_unitas
 
 import android.R
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.AlertDialog
 import android.content.Context
@@ -45,7 +46,6 @@ class Chromeclient_Test(activity: Activity, var context: Context, webView: WebVi
         intent.type = TYPE_IMAGE
         activity.startActivityForResult(intent, INPUT_FILE_REQUEST_CODE)
     }
-
     // For 3.0 <= Android Version < 4.1
     fun openFileChooser(uploadMsg: ValueCallback<Uri>?, acceptType: String?) {
         //System.out.println("WebViewActivity 3<A<4.1, OS Version : " + Build.VERSION.SDK_INT + "\t openFC(VCU,aT), n=2");
